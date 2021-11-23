@@ -1,46 +1,3 @@
-variable "name" {
-}
-
-variable "region" {
-}
-
-variable "ami" {
-}
-
-variable "server_instance_type" {
-}
-
-variable "client_instance_type" {
-}
-
-variable "key_name" {
-}
-
-variable "server_count" {
-}
-
-variable "client_count" {
-}
-
-variable "nomad_binary" {
-}
-
-variable "root_block_device_size" {
-}
-
-variable "whitelist_ip" {
-}
-
-variable "retry_join" {
-  type = map(string)
-
-  default = {
-    provider  = "aws"
-    tag_key   = "ConsulAutoJoin"
-    tag_value = "auto-join"
-  }
-}
-
 data "aws_vpc" "default" {
   default = true
 }
@@ -54,7 +11,7 @@ resource "aws_security_group" "server_lb" {
     from_port   = 4646
     to_port     = 4646
     protocol    = "tcp"
-    cidr_blocks = [var.whitelist_ip]
+    cidr_blocks = [var.allowlist_ip]
   }
 
   # Consul
@@ -62,7 +19,7 @@ resource "aws_security_group" "server_lb" {
     from_port   = 8500
     to_port     = 8500
     protocol    = "tcp"
-    cidr_blocks = [var.whitelist_ip]
+    cidr_blocks = [var.allowlist_ip]
   }
 
   egress {
@@ -82,7 +39,15 @@ resource "aws_security_group" "client_lb" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = [var.whitelist_ip]
+    cidr_blocks = [var.allowlist_ip]
+  }
+
+  # HTTPS
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.allowlist_ip]
   }
 
   egress {
@@ -101,7 +66,7 @@ resource "aws_security_group" "primary" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.whitelist_ip]
+    cidr_blocks = [var.allowlist_ip]
   }
 
   # Nomad
@@ -109,7 +74,7 @@ resource "aws_security_group" "primary" {
     from_port       = 4646
     to_port         = 4646
     protocol        = "tcp"
-    cidr_blocks     = [var.whitelist_ip]
+    cidr_blocks     = [var.allowlist_ip]
     security_groups = [aws_security_group.server_lb.id]
   }
 
@@ -118,7 +83,7 @@ resource "aws_security_group" "primary" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    cidr_blocks     = [var.whitelist_ip]
+    cidr_blocks     = [var.allowlist_ip]
     security_groups = [aws_security_group.client_lb.id]
   }
 
@@ -127,7 +92,7 @@ resource "aws_security_group" "primary" {
     from_port       = 8500
     to_port         = 8500
     protocol        = "tcp"
-    cidr_blocks     = [var.whitelist_ip]
+    cidr_blocks     = [var.allowlist_ip]
     security_groups = [aws_security_group.server_lb.id]
   }
 

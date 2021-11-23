@@ -1,7 +1,7 @@
 {
   "builders": [{
     "type": "amazon-ebs",
-    "region": "us-east-1",
+    "region": "us-west-2",
     "source_ami_filter": {
       "filters": {
         "virtualization-type": "hvm",
@@ -27,11 +27,11 @@
   },
   {
     "type": "file",
-    "source": "../shared",
+    "source": "./shared",
     "destination": "/ops"
   },
   {
     "type": "shell",
-    "script": "../shared/scripts/setup.sh"
+    "script": "./shared/scripts/setup.sh"
   }]
 }

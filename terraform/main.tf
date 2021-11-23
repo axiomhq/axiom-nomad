@@ -6,8 +6,16 @@ provider "aws" {
   region = var.region
 }
 
+module "axiom" {
+  source = "./modules/axiom"
+
+  name   = "${var.name}-${random_pet.nomad.id}"
+  region = var.region
+  bucket = var.bucket
+}
+
 module "hashistack" {
-  source = "../../modules/hashistack"
+  source = "./modules/hashistack"
 
   name                   = "${var.name}-${random_pet.nomad.id}"
   region                 = var.region
@@ -20,5 +28,5 @@ module "hashistack" {
   retry_join             = var.retry_join
   nomad_binary           = var.nomad_binary
   root_block_device_size = var.root_block_device_size
-  whitelist_ip           = var.whitelist_ip
+  allowlist_ip           = var.allowlist_ip
 }

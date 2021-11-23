@@ -2,13 +2,16 @@ variable "name" {
   description = "Used to name various infrastructure components"
 }
 
-variable "whitelist_ip" {
-  description = "IP to whitelist for the security groups (set 0.0.0.0/0 for world)"
+variable "allowlist_ip" {
+  description = "IP to allow for the security groups (set 0.0.0.0/0 for world)"
 }
 
 variable "region" {
   description = "The AWS region to deploy to."
-  default     = "us-east-1"
+}
+
+variable "bucket" {
+  description = "The name of the S3 bucket to store the blocks in"
 }
 
 variable "ami" {
